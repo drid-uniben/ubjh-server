@@ -154,7 +154,13 @@ class ManuscriptReviewsController {
       if (status) {
         if (status === 'reviewed') {
           matchConditions.status = {
-            $in: ['approved', 'rejected', 'minor_revision', 'major_revision'],
+            $in: [
+              'approved',
+              'rejected',
+              'minor_revision',
+              'major_revision',
+              'review_communicated',
+            ],
           };
         } else {
           matchConditions.status = status;
@@ -321,10 +327,15 @@ class ManuscriptReviewsController {
         totalWithReviews++;
         if (manuscript.status === 'under_review') underReview++;
         if (
-          ['approved', 'rejected', 'minor_revision', 'major_revision'].includes(
-            manuscript.status
-          )
-        ) reviewed++;
+          [
+            'approved',
+            'rejected',
+            'minor_revision',
+            'major_revision',
+            'review_communicated',
+          ].includes(manuscript.status)
+        )
+          reviewed++;
         if (manuscript.status === 'in_reconciliation') inReconciliation++;
 
         const humanReviews = manuscript.reviews.filter(
@@ -382,10 +393,12 @@ class ManuscriptReviewsController {
       dueDate: review.dueDate,
       completedAt: review.completedAt,
       createdAt: review.createdAt,
-      reviewer: review.reviewer ? {
-        name: review.reviewer.name,
-        email: review.reviewer.email,
-      } : null,
+      reviewer: review.reviewer
+        ? {
+            name: review.reviewer.name,
+            email: review.reviewer.email,
+          }
+        : null,
     };
   };
 }
