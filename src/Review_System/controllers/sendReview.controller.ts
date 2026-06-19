@@ -31,7 +31,7 @@ class SendReviewController {
       const { manuscriptId } = req.params;
       const { allowRevision, commentsForAuthor, reviewerIds } = req.body as {
         allowRevision: boolean;
-        commentsForAuthor: string;
+        commentsForAuthor?: string;
         reviewerIds?: string[];
       };
 
@@ -74,6 +74,18 @@ class SendReviewController {
         finalReviewerIds = [completedReviews[0].reviewer as Types.ObjectId];
       }
 
+      let finalComments: string;
+      if (completedReviews.length > 1) {
+        if (!commentsForAuthor || !commentsForAuthor.trim()) {
+          throw new BadRequestError(
+            'A summary comment for the author is required when there is more than one review.'
+          );
+        }
+        finalComments = commentsForAuthor;
+      } else {
+        finalComments = completedReviews[0].comments?.commentsForAuthor || '';
+      }
+
       const submitter = manuscript.submitter as unknown as IUser;
 
       // Credentials first, then the review notification (per spec)
@@ -104,7 +116,7 @@ class SendReviewController {
       manuscript.reviewersForRevision = finalReviewerIds;
       manuscript.reviewComments = {
         ...(manuscript.reviewComments || {}),
-        commentsForAuthor,
+        commentsForAuthor: finalComments,
       };
       manuscript.reviewedAt = new Date();
       await manuscript.save();

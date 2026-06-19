@@ -43,7 +43,7 @@ const sendReviewSchema = z.object({
   }),
   body: z.object({
     allowRevision: z.boolean(),
-    commentsForAuthor: z.string().min(1, 'Comments for author are required'),
+    commentsForAuthor: z.string().optional(),
     reviewerIds: z.array(z.string().regex(/^[0-9a-fA-F]{24}$/)).optional(),
   }),
 });
