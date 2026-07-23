@@ -88,11 +88,11 @@ router.post(
 );
 
 // Dashboard route
-const researcherRateLimiter = rateLimiter(50, 60 * 60 * 1000); // 50 requests per hour
+const authorRateLimiter = rateLimiter(5000, 60 * 60 * 1000); // 50 requests per hour
 router.get(
   '/dashboard',
   authenticateAuthorToken,
-  researcherRateLimiter,
+  authorRateLimiter,
   authorController.getAuthorDashboard
 );
 
@@ -100,7 +100,7 @@ router.get(
 router.get(
   '/manuscripts/:manuscriptId',
   authenticateAuthorToken,
-  researcherRateLimiter,
+  authorRateLimiter,
   authorController.getManuscriptDetails
 );
 
